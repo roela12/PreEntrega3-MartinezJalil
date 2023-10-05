@@ -102,8 +102,8 @@ function resetBoard() {
 
 //funcion para resetear el score
 function resetScore() {
-  player1 = new player(1, "rodri", 0);
-  player2 = new player(2, "lauti", 0);
+  player1 = new player(1, "Jugador 1", 0);
+  player2 = new player(2, "Jugador 2", 0);
   localStorage.clear();
   scoreboard();
 }

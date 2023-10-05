@@ -38,6 +38,8 @@ p {
   align-items: center;
   font-size: 36px;
   cursor: pointer;
+  width: 96.5px;
+  height: 96.5px;
 }
 
 #message {
