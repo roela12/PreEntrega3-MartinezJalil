@@ -8,15 +8,20 @@ const scorePlayer2 = document.querySelector("#jugador2");
 
 // Clase para los jugadores
 class player {
-  constructor(name, score) {
+  constructor(id, name, score) {
+    this.id = id;
     this.name = name;
     this.score = score;
   }
 }
 
+// Traigo los jugadores del storage
+const player1Storage = JSON.parse(localStorage.getItem("1"));
+const player2Storage = JSON.parse(localStorage.getItem("2"));
+
 // Inicio los jugadores
-let player1 = new player("rodri", 0);
-let player2 = new player("lauti", 0);
+let player1 = player1Storage || new player(1, "Jugador 1", 0);
+let player2 = player2Storage || new player(2, "Jugador 2", 0);
 
 // Posibles combinaciones para ganar
 const winningCombinations = [
@@ -48,6 +53,10 @@ function makeMove(cellIndex) {
     if (checkWin()) {
       message.innerText = `${whoIs(currentPlayer).name} ha ganado!`;
       whoIs(currentPlayer).score++;
+      localStorage.setItem(
+        `${whoIs(currentPlayer).id}`,
+        JSON.stringify(whoIs(currentPlayer))
+      );
       gameActive = false;
       scoreboard();
       // Si ya no hay celdas vacias, se declara empate
@@ -91,22 +100,35 @@ function resetBoard() {
   message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
 }
 
+//funcion para resetear el score
+function resetScore() {
+  player1 = new player(1, "rodri", 0);
+  player2 = new player(2, "lauti", 0);
+  localStorage.clear();
+  scoreboard();
+}
+
 // Obtengo todas las celdas
 const cells = document.querySelectorAll(".cell");
 
 // Inicio de evento
+scoreboard();
 for (let i = 0; i < cells.length; i++) {
   cells[i].addEventListener("click", () => {
     makeMove(i);
   });
 }
 
+// Inicio
+message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
+
 // Boton de reinicio
 const resetButton = document.querySelector("#btnReset");
 resetButton.addEventListener("click", resetBoard);
 
-// Inicio
-message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
+// Boton de borrar score
+const resetScoreButton = document.querySelector("#btnResetScore");
+resetScoreButton.addEventListener("click", resetScore);
 
 // Modifico el scoreboard
 function scoreboard() {
