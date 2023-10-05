@@ -35,6 +35,12 @@ const winningCombinations = [
   [2, 4, 6],
 ];
 
+// Funcion para modificar el scoreboard
+function scoreboard() {
+  scorePlayer1.innerText = `${player1.name}: ${player1.score}`;
+  scorePlayer2.innerText = `${player2.name}: ${player2.score}`;
+}
+
 // Funcion para saber quien es el currentplayer
 function whoIs(currentPlayer) {
   if (currentPlayer === "X") {
@@ -42,6 +48,23 @@ function whoIs(currentPlayer) {
   } else {
     return player2;
   }
+}
+
+// Funcion para verificar si hay un ganador
+function checkWin() {
+  // Comparo las posiciones de las celdas elegidas con los posibles arrays ganadores
+  for (const array of winningCombinations) {
+    const [a, b, c] = array;
+    const equals =
+      gameBoard[a] === gameBoard[b] && gameBoard[b] === gameBoard[c]
+        ? true
+        : false;
+    // Aparte de revisar que las 3 celdas tengan el mismo contenido, pregunto si no estan vacias
+    if (gameBoard[a] && equals) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Funcion para realizar un movimiento
@@ -71,23 +94,6 @@ function makeMove(cellIndex) {
   }
 }
 
-// Funcion para verificar si hay un ganador
-function checkWin() {
-  // Comparo las posiciones de las celdas elegidas con los posibles arrays ganadores
-  for (const array of winningCombinations) {
-    const [a, b, c] = array;
-    const equals =
-      gameBoard[a] === gameBoard[b] && gameBoard[b] === gameBoard[c]
-        ? true
-        : false;
-    // Aparte de revisar que las 3 celdas tengan el mismo contenido, pregunto si no estan vacias
-    if (gameBoard[a] && equals) {
-      return true;
-    }
-  }
-  return false;
-}
-
 // Funcion para reiniciar el juego
 function resetBoard() {
   currentPlayer = "X";
@@ -111,6 +117,9 @@ function resetScore() {
 // Obtengo todas las celdas
 const cells = document.querySelectorAll(".cell");
 
+// Inicio
+message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
+
 // Inicio de evento
 scoreboard();
 for (let i = 0; i < cells.length; i++) {
@@ -119,9 +128,6 @@ for (let i = 0; i < cells.length; i++) {
   });
 }
 
-// Inicio
-message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
-
 // Boton de reinicio
 const resetButton = document.querySelector("#btnReset");
 resetButton.addEventListener("click", resetBoard);
@@ -129,9 +135,3 @@ resetButton.addEventListener("click", resetBoard);
 // Boton de borrar score
 const resetScoreButton = document.querySelector("#btnResetScore");
 resetScoreButton.addEventListener("click", resetScore);
-
-// Modifico el scoreboard
-function scoreboard() {
-  scorePlayer1.innerText = `${player1.name}: ${player1.score}`;
-  scorePlayer2.innerText = `${player2.name}: ${player2.score}`;
-}
