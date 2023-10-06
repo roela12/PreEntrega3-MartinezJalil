@@ -5,6 +5,20 @@ let gameActive = true;
 const message = document.querySelector("#message");
 const scorePlayer1 = document.querySelector("#jugador1");
 const scorePlayer2 = document.querySelector("#jugador2");
+const namePlayer1 = document.querySelector("#nombre1");
+const namePlayer2 = document.querySelector("#nombre2");
+
+// Posibles combinaciones para ganar
+const winningCombinations = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
 
 // Clase para los jugadores
 class player {
@@ -23,18 +37,6 @@ const player2Storage = JSON.parse(localStorage.getItem("2"));
 let player1 = player1Storage || new player(1, "Jugador 1", 0);
 let player2 = player2Storage || new player(2, "Jugador 2", 0);
 
-// Posibles combinaciones para ganar
-const winningCombinations = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-];
-
 // Funcion para modificar el scoreboard
 function scoreboard() {
   scorePlayer1.innerText = `${player1.name}: ${player1.score}`;
@@ -49,6 +51,18 @@ function whoIs(currentPlayer) {
     return player2;
   }
 }
+
+// Funcion para cargar los nombres
+function loadBothNames() {
+  player1.name = namePlayer1.value || "Jugador 1";
+  player2.name = namePlayer2.value || "Jugador 2";
+  scoreboard();
+  message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
+}
+
+// Cargo los nombres con boton
+const loadNames = document.querySelector("#loadNames");
+loadNames.addEventListener("click", loadBothNames);
 
 // Funcion para verificar si hay un ganador
 function checkWin() {
@@ -76,10 +90,8 @@ function makeMove(cellIndex) {
     if (checkWin()) {
       message.innerText = `${whoIs(currentPlayer).name} ha ganado!`;
       whoIs(currentPlayer).score++;
-      localStorage.setItem(
-        `${whoIs(currentPlayer).id}`,
-        JSON.stringify(whoIs(currentPlayer))
-      );
+      localStorage.setItem("1", JSON.stringify(player1));
+      localStorage.setItem("2", JSON.stringify(player2));
       gameActive = false;
       scoreboard();
       // Si ya no hay celdas vacias, se declara empate
@@ -112,6 +124,7 @@ function resetScore() {
   player2 = new player(2, "Jugador 2", 0);
   localStorage.clear();
   scoreboard();
+  message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
 }
 
 // Obtengo todas las celdas
