@@ -23,6 +23,7 @@ p {
 input {
   font-size: 20px;
   color: white;
+  border-radius: 5px;
 }
 
 #board {
