@@ -89,6 +89,12 @@ function makeMove(cellIndex) {
 
     if (checkWin()) {
       message.innerText = `${whoIs(currentPlayer).name} ha ganado!`;
+      Swal.fire({
+        title: `${whoIs(currentPlayer).name} ha ganado!`,
+        icon: "success",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "green",
+      });
       whoIs(currentPlayer).score++;
       localStorage.setItem("1", JSON.stringify(player1));
       localStorage.setItem("2", JSON.stringify(player2));
@@ -97,6 +103,12 @@ function makeMove(cellIndex) {
       // Si ya no hay celdas vacias, se declara empate
     } else if (!gameBoard.includes("")) {
       message.innerText = "Empate!";
+      Swal.fire({
+        title: "Empate!",
+        icon: "info",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "blue",
+      });
       gameActive = false;
     } else {
       // Si nadie gana, el turno cambia
