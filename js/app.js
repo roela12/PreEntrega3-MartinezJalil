@@ -7,6 +7,43 @@ const scorePlayer1 = document.querySelector("#jugador1");
 const scorePlayer2 = document.querySelector("#jugador2");
 const namePlayer1 = document.querySelector("#nombre1");
 const namePlayer2 = document.querySelector("#nombre2");
+const divInfoPokemon = document.querySelector("#infoPokemon");
+const inputPokemon1 = document.querySelector("#pokemon1");
+const inputPokemon2 = document.querySelector("#pokemon2");
+
+function loadBothPokemons() {
+  const pokemon1 = inputPokemon1.value;
+  const pokemon2 = inputPokemon2.value;
+  divInfoPokemon.innerHTML = `
+    <img width="20%" src="https://i.gifer.com/LCPT.gif" alt="Cargando">
+    <p>Revisar los nombres de los pokemon!</p>`;
+  cargarPokemon(pokemon1, pokemon2);
+}
+
+async function cargarPokemon(pokemon1, pokemon2) {
+  const respuesta1 = await fetch(
+    `https://pokeapi.co/api/v2/pokemon/${pokemon1}/`
+  );
+  const respuesta2 = await fetch(
+    `https://pokeapi.co/api/v2/pokemon/${pokemon2}/`
+  );
+  const infoPokemon1 = await respuesta1.json();
+  const infoPokemon2 = await respuesta2.json();
+  divInfoPokemon.innerHTML = `
+    <div class="pokemon">
+      <h2>#${infoPokemon1.id} - ${infoPokemon1.name}</h2>
+      <img src="${infoPokemon1.sprites.other.dream_world.front_default}" alt="${infoPokemon1.name}"/>
+    </div>
+    <div class="pokemon">
+      <h2>#${infoPokemon2.id} - ${infoPokemon2.name}</h2>
+      <img src="${infoPokemon2.sprites.other.dream_world.front_default}" alt="${infoPokemon2.name}"/>
+    </div>
+      `;
+}
+
+// Cargo los pokemones con boton
+const loadPokemons = document.querySelector("#loadPokemons");
+loadPokemons.addEventListener("click", loadBothPokemons);
 
 // Posibles combinaciones para ganar
 const winningCombinations = [

@@ -60,7 +60,10 @@ button {
   border-radius: 5px;
 }
 
-#loadNames {
-  display: block;
-  margin: 20px auto;
+img {
+  width: 100px;
+}
+
+.pokemon {
+  display: inline-block;
 }
