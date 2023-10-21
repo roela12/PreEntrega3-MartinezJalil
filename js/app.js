@@ -43,8 +43,8 @@ let player2 = player2Storage || new player("O", "Jugador 2", 0, "");
 
 // Funcion para cargar los pokemones
 function loadBothPokemons() {
-  const pokemon1 = inputPokemon1.value;
-  const pokemon2 = inputPokemon2.value;
+  const pokemon1 = inputPokemon1.value.toLowerCase();
+  const pokemon2 = inputPokemon2.value.toLowerCase();
   divInfoPokemon.innerHTML = `
     <img width="20%" src="https://i.gifer.com/LCPT.gif" alt="Cargando">
     <p>Revisar los nombres de los pokemon!</p>`;
