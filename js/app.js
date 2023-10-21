@@ -120,7 +120,6 @@ function makeMove(cellIndex) {
 
 // Funcion para reiniciar el juego
 function resetBoard() {
-  currentPlayer = "X";
   gameBoard = ["", "", "", "", "", "", "", "", ""];
   gameActive = true;
   message.innerText = "";
