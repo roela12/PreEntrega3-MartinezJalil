@@ -11,6 +11,37 @@ const divInfoPokemon = document.querySelector("#infoPokemon");
 const inputPokemon1 = document.querySelector("#pokemon1");
 const inputPokemon2 = document.querySelector("#pokemon2");
 
+// Posibles combinaciones para ganar
+const winningCombinations = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
+
+// Clase para los jugadores
+class player {
+  constructor(id, name, score, pokemon) {
+    this.id = id;
+    this.name = name;
+    this.score = score;
+    this.pokemon = pokemon;
+  }
+}
+
+// Traigo los jugadores del storage
+const player1Storage = JSON.parse(localStorage.getItem("1"));
+const player2Storage = JSON.parse(localStorage.getItem("2"));
+
+// Inicio los jugadores
+let player1 = player1Storage || new player("X", "Jugador 1", 0, "");
+let player2 = player2Storage || new player("O", "Jugador 2", 0, "");
+
+// Funcion para cargar los pokemones
 function loadBothPokemons() {
   const pokemon1 = inputPokemon1.value;
   const pokemon2 = inputPokemon2.value;
@@ -29,13 +60,17 @@ async function cargarPokemon(pokemon1, pokemon2) {
   );
   const infoPokemon1 = await respuesta1.json();
   const infoPokemon2 = await respuesta2.json();
+  player1.pokemon = infoPokemon1.sprites.other.dream_world.front_default;
+  player2.pokemon = infoPokemon2.sprites.other.dream_world.front_default;
+  localStorage.setItem("1", JSON.stringify(player1));
+  localStorage.setItem("2", JSON.stringify(player2));
   divInfoPokemon.innerHTML = `
     <div class="pokemon">
-      <h2>#${infoPokemon1.id} - ${infoPokemon1.name}</h2>
+      <h2>${player1.name}:</h2>
       <img src="${infoPokemon1.sprites.other.dream_world.front_default}" alt="${infoPokemon1.name}"/>
     </div>
     <div class="pokemon">
-      <h2>#${infoPokemon2.id} - ${infoPokemon2.name}</h2>
+      <h2>${player2.name}:</h2>
       <img src="${infoPokemon2.sprites.other.dream_world.front_default}" alt="${infoPokemon2.name}"/>
     </div>
       `;
@@ -44,35 +79,6 @@ async function cargarPokemon(pokemon1, pokemon2) {
 // Cargo los pokemones con boton
 const loadPokemons = document.querySelector("#loadPokemons");
 loadPokemons.addEventListener("click", loadBothPokemons);
-
-// Posibles combinaciones para ganar
-const winningCombinations = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-];
-
-// Clase para los jugadores
-class player {
-  constructor(id, name, score) {
-    this.id = id;
-    this.name = name;
-    this.score = score;
-  }
-}
-
-// Traigo los jugadores del storage
-const player1Storage = JSON.parse(localStorage.getItem("1"));
-const player2Storage = JSON.parse(localStorage.getItem("2"));
-
-// Inicio los jugadores
-let player1 = player1Storage || new player(1, "Jugador 1", 0);
-let player2 = player2Storage || new player(2, "Jugador 2", 0);
 
 // Funcion para modificar el scoreboard
 function scoreboard() {
@@ -89,12 +95,31 @@ function whoIs(currentPlayer) {
   }
 }
 
+// Funcion para imprimir los pokemons
+function printPokemon() {
+  divInfoPokemon.innerHTML = `
+    <div class="pokemon">
+      <h2>${player1.name}:</h2>
+      <img src="${player1.pokemon}" alt="Pokemon de ${player1.name}"/>
+    </div>
+    <div class="pokemon">
+      <h2>${player2.name}:</h2>
+      <img src="${player2.pokemon}" alt="Pokemon de ${player2.name}"/>
+    </div>
+      `;
+}
+
 // Funcion para cargar los nombres
 function loadBothNames() {
   player1.name = namePlayer1.value || "Jugador 1";
   player2.name = namePlayer2.value || "Jugador 2";
+  localStorage.setItem("1", JSON.stringify(player1));
+  localStorage.setItem("2", JSON.stringify(player2));
   scoreboard();
   message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
+  if (player1.pokemon) {
+    printPokemon();
+  }
 }
 
 // Cargo los nombres con boton
@@ -122,7 +147,14 @@ function checkWin() {
 function makeMove(cellIndex) {
   if (gameBoard[cellIndex] === "" && gameActive) {
     gameBoard[cellIndex] = currentPlayer;
-    cells[cellIndex].innerText = currentPlayer;
+    if (player1.pokemon) {
+      cells[cellIndex].innerHTML = `
+        <img src="${whoIs(currentPlayer).pokemon}" alt="${
+        whoIs(currentPlayer).id
+      }"/>`;
+    } else {
+      cells[cellIndex].innerText = currentPlayer;
+    }
 
     if (checkWin()) {
       message.innerText = `${whoIs(currentPlayer).name} ha ganado!`;
@@ -168,11 +200,12 @@ function resetBoard() {
 
 //funcion para resetear el score
 function resetScore() {
-  player1 = new player(1, "Jugador 1", 0);
-  player2 = new player(2, "Jugador 2", 0);
+  player1 = new player("X", "Jugador 1", 0, "");
+  player2 = new player("O", "Jugador 2", 0, "");
   localStorage.clear();
   scoreboard();
   message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
+  divInfoPokemon.innerHTML = "";
 }
 
 // Obtengo todas las celdas
@@ -180,6 +213,9 @@ const cells = document.querySelectorAll(".cell");
 
 // Inicio
 message.innerText = `Turno de ${whoIs(currentPlayer).name}`;
+if (player1.pokemon) {
+  printPokemon();
+}
 
 // Inicio de evento
 scoreboard();
